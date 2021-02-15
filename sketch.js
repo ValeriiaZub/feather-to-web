@@ -9,17 +9,9 @@ let radius = 0; // radius of the base circle
 let inter = 0.05; // difference of base radii of two consecutive blobs
 let maxNoise = 700; // maximal  value for the parameter "noisiness" for the blobs
 let color = 1;
-let data;
+let counter =0;
 
 function setup() {
-    let data = getData();
-
-    if (data == 1){
-        color = 1;
-    }else {
-        color = 0;
-    }
-
     createCanvas(windowWidth, windowHeight);
     colorMode(HSB, 1);
     angleMode(DEGREES);
@@ -28,15 +20,6 @@ function setup() {
     kMax = random(0.6, 1.0);
     noStroke();
 }
-
-function getData() {
-    httpGet(url, 'json', function (response) {
-        console.log(response);
-        data = response.last_value;
-        console.log(data);
-    });
-}
-
 function draw() {
   background(0, 0, 0);
   let t = frameCount/100;
@@ -48,6 +31,11 @@ function draw() {
     let noisiness = maxNoise * (i / n);
     blob(size, width/2, height/2, k, t - i * step, noisiness);
   }
+
+  if (counter % 80 == 0) {
+    getData();
+}
+counter++;
 }
 
 // Creates and draws a blob
@@ -84,4 +72,20 @@ function blob(size, xCenter, yCenter, k, t, noisiness) {
     curveVertex(x, y);
   }
   endShape();
+}
+
+
+function getData() {
+    let data;
+    httpGet(url, 'json', function (response) {
+        console.log(response);
+        data = response.last_value;
+        console.log(data);
+
+        if (data == 1){
+            color = 1;
+        }else {
+            color = 0;
+        }
+    });
 }
